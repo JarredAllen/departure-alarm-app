@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "634754436514",
+    "firebase_url": "https://departurealarm-7445e.firebaseio.com",
+    "project_id": "departurealarm-7445e",
+    "storage_bucket": "departurealarm-7445e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:634754436514:android:93ebf64f23235a8e",
+        "android_client_info": {
+          "package_name": "com.example.jarred.departurealarm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "634754436514-9mt8ft04e26jnpqt2rilr61bt3d28r5l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.jarred.departurealarm",
+            "certificate_hash": "7C9C0C4DB17EA56D6EB3E69E6304F3D0C1393209"
+          }
+        },
+        {
+          "client_id": "634754436514-bd5gct0teh8h5nkpvpffhseviejpdkva.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "634754436514-h71p3cpisdmuc28dv63eq937ir2r8f85.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2N2rSrCcto3UxnBKXsddYdrNZm-RbqVM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "634754436514-bd5gct0teh8h5nkpvpffhseviejpdkva.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
