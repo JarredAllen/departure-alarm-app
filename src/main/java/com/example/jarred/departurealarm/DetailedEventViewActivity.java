@@ -4,7 +4,14 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
+/**
+ * A class that runs code for showing a detailed view of all of the events in an activity
+ *
+ * @author Jarred
+ * @version 10/29/2016
+ */
 public class DetailedEventViewActivity extends AppCompatActivity {
 
     private static String packageName="com.example.jarred.departurealarm";
@@ -21,6 +28,12 @@ public class DetailedEventViewActivity extends AppCompatActivity {
                 editEvent();
             }
         });
+        ue=EventRetriever.findEventByName(getIntent().getStringExtra(packageName+".eventName"));
+        TextView eventName=(TextView)findViewById(R.id.event_name_display);
+        eventName.setText(ue.getName());
+        TextView eventLocation=(TextView)findViewById(R.id.event_location_display);
+        eventLocation.setText(ue.getLocation().getAddress());
+
     }
 
     private void editEvent() {

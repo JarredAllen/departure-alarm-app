@@ -17,7 +17,7 @@ import java.util.TreeSet;
  * Handles loading in the events and storing them
  *
  * @author Jarred
- * @version 10/27/2016
+ * @version 10/29/2016
  */
 public final class EventRetriever {
     private EventRetriever(){}

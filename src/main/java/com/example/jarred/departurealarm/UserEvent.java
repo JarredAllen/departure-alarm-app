@@ -20,9 +20,8 @@ import java.util.IllegalFormatException;
  * A class that represents events that the user may have
  *
  * @author Jarred
- * @version 10/27/2016
+ * @version 10/29/2016
  */
-
 public class UserEvent implements Comparable<UserEvent> {
 
     private long time;//number of seconds after Jan. 1, 1970
@@ -54,7 +53,7 @@ public class UserEvent implements Comparable<UserEvent> {
      * @param location The location of this event, as a string (anything that Google Maps will take)
      */
     public UserEvent(long time, String name, Place location) {
-        this(time, name, location, new ArrayList<EventNotification>());
+        this(time, name, location, new ArrayList<EventNotification>(5));
     }
 
     /**
@@ -156,7 +155,7 @@ public class UserEvent implements Comparable<UserEvent> {
         return name;
     }
 
-    public void setName(@Nullable String name) {
+    public void setName(String name) {
         if(name==null) {
             name="";
         }
@@ -169,6 +168,14 @@ public class UserEvent implements Comparable<UserEvent> {
 
     public void setLocation(Place location) {
         this.location = location;
+    }
+
+    public void clearNotifications() {
+        notifications=new ArrayList<>(5);
+    }
+
+    public void addNotification(EventNotification en) {
+        notifications.add(en);
     }
 }
 

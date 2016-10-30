@@ -3,8 +3,11 @@ package com.example.jarred.departurealarm;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -15,6 +18,7 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
 /**
@@ -41,7 +45,11 @@ public class EventEditorActivity extends AppCompatActivity {
 
     private int visibleEvents=1;
 
+    private GregorianCalendar gc;
+
     private Place currentPlace;
+
+    //TODO: Track erroring fields
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +94,7 @@ public class EventEditorActivity extends AppCompatActivity {
         eventTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: This
+                selectTime();
             }
         });
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
@@ -112,6 +120,10 @@ public class EventEditorActivity extends AppCompatActivity {
         notificationTexts[2]=(EditText)findViewById(R.id.notification_time3);
         notificationTexts[3]=(EditText)findViewById(R.id.notification_time4);
         notificationTexts[4]=(EditText)findViewById(R.id.notification_time5);
+        OnNotificationInAdvanceChanged oniac=new OnNotificationInAdvanceChanged();
+        for(EditText et:notificationTexts) {
+            et.setOnEditorActionListener(oniac);
+        }
         notificationDeleteButtons=new Button[5];
         notificationDeleteButtons[0]=(Button)findViewById(R.id.delete_button1);
         notificationDeleteButtons[1]=(Button)findViewById(R.id.delete_button2);
@@ -122,6 +134,10 @@ public class EventEditorActivity extends AppCompatActivity {
         for(Button b:notificationDeleteButtons) {
             b.setOnClickListener(onr);
         }
+    }
+
+    private void selectTime() {
+
     }
 
     private void addNotification() {
@@ -154,23 +170,28 @@ public class EventEditorActivity extends AppCompatActivity {
         //TODO: Write the changes into everything that they need to be written into
         switch(mode) {
             case "create":
-                UserEvent ue=new UserEvent(0,"",currentPlace);//TODO Fix this line by properly assigning values
+                ArrayList<EventNotification>enl=new ArrayList<>(5);
+                for(int i=0;i<visibleEvents;i++) {
+                    //TODO: Get time values
+                }
+                UserEvent ue=new UserEvent(gc.getTime().getTime(),eventName.getText().toString(),currentPlace, enl);
                 EventRetriever.addEvent(ue);
                 break;
 
             case "edit":
                 ue=EventRetriever.findEventByName(eventNameToEdit);
                 ue.setName(eventName.getText().toString());
-                long time=0;
-                //TODO: Assign all of the other things to ue
-                ue.setTime(time);
+                ue.setTime(gc.getTime().getTime());
                 ue.setLocation(currentPlace);
+                ue.clearNotifications();
+                for(EditText et:notificationTexts) {
+                    //TODO: Add notifications to ue
+                }
                 EventRetriever.updateEvent(ue);
                 break;
 
             default:
-                throw new RuntimeException();//TODO: At launch, comment this line out
-                //This line should not run, but I will leave it here just in case
+                throw new RuntimeException();//This line should not run, but I will leave it here just in case
         }
     }
 
@@ -181,6 +202,32 @@ public class EventEditorActivity extends AppCompatActivity {
                     removeNotification(i);
                 }
             }
+        }
+    }
+
+    class OnNotificationInAdvanceChanged implements TextView.OnEditorActionListener {
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            if(actionId==EditorInfo.IME_NULL) {
+                String[] vals=v.getText().toString().split(":");
+                if(!(vals.length==0)) {
+                    v.setError("Not a valid time. Accepted formats: H:MM, HH:MM");
+                    v.requestFocus();
+                }
+                try {
+                    byte h=Byte.parseByte(vals[0]);
+                    byte m=Byte.parseByte(vals[1]);
+                    if(h>99||h<0||m>60||m<0) {
+                        v.setError("Not a valid time. Accepted formats: H:MM, HH:MM");
+                        v.requestFocus();
+                    }
+                }
+                catch (NumberFormatException nfe) {
+                    v.setError("Not a valid time. Accepted format: HH:MM");
+                    v.requestFocus();
+                }
+            }
+            return true;
         }
     }
 }

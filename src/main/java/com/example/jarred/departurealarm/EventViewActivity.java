@@ -18,7 +18,7 @@ import java.util.UnknownFormatConversionException;
  * The activity to see an overview of all upcoming events
  *
  * @author Jarred
- * @version 10/27/2016
+ * @version 10/29/2016
  */
 public class EventViewActivity extends AppCompatActivity implements CalendarView.InteractionListener {
 
@@ -73,7 +73,15 @@ public class EventViewActivity extends AppCompatActivity implements CalendarView
     }
 
     public void viewEvent(String name) {
-        //TODO: This
+        Intent intent=new Intent(this, DetailedEventViewActivity.class);
+        intent.putExtra(packageName+".eventName", name);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventRetriever.writeToFirebase();
     }
 
     private class EventViewChangeListener implements CompoundButton.OnCheckedChangeListener {
