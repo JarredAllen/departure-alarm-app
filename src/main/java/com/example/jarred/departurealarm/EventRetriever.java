@@ -3,6 +3,8 @@ package com.example.jarred.departurealarm;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
@@ -10,14 +12,16 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Handles loading in the events and storing them
  *
  * @author Jarred
- * @version 10/29/2016
+ * @version 10/30/2016
  */
 public final class EventRetriever {
     private EventRetriever(){}
@@ -25,8 +29,11 @@ public final class EventRetriever {
     private static Collection<UserEvent> events;
     private static FirebaseStorage storage;
 
+    private static boolean isLoaded;
+
     static {
         storage=FirebaseStorage.getInstance();
+        isLoaded=false;
     }
 
     /**
@@ -46,11 +53,33 @@ public final class EventRetriever {
      */
     private static void buildEvents() {
         if(events==null) {
-            events=new TreeSet<>();
-            String text = "";
-            //TODO: Retrieve the text from the user's file
-            for (String event : text.split("\uFDD1")) {
-                events.add(UserEvent.userEventFromString(event));
+            FirebaseUser fu = FirebaseAuth.getInstance().getCurrentUser();
+            if (fu == null) {
+                throw new IllegalStateException("The user must be logged in.");
+            }
+            else {
+                events = new TreeSet<>();
+                //TODO: Retrieve the text from the user's file
+                StorageReference ref = storage.getReferenceFromUrl("gs://departurealarm-7445e.appspot.com/" + fu.getUid() + "/events.txt");
+                ref.getBytes(1000000).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        char[] chars = new char[bytes.length];
+                        for (int i = 0; i < bytes.length; i++) {
+                            chars[i] = (char) bytes[i];
+                        }
+                        String text = new String(chars);
+                        for (String event : text.split("\uFDD1")) {
+                            events.add(UserEvent.userEventFromString(event));
+                        }
+                        isLoaded = true;
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        //TODO: Handle being unable to acquire the user's data from the server
+                    }
+                });
             }
         }
     }
@@ -61,6 +90,14 @@ public final class EventRetriever {
      * @param ue The event that the user has deleted
      */
     public static void removeEvent(UserEvent ue) {
+        while(!isLoaded) {
+            try {
+                Thread.sleep(1000);
+            }
+            catch (InterruptedException ie) {
+                assert true;
+            }
+        }
         events.remove(ue);
     }
 
@@ -89,7 +126,6 @@ public final class EventRetriever {
     }
 
     public static void writeToFirebase() throws IllegalStateException {
-        //TODO: Write turnEventsToString() to the Firebase Storage
         try {
             StorageReference toWrite = storage.getReference("gs://departurealarm-7445e.appspot.com/" + FirebaseAuth.getInstance().getCurrentUser().getUid() + "/events.txt");
             toWrite.putBytes(turnEventsToString().getBytes());
