@@ -1,11 +1,8 @@
 package com.example.jarred.departurealarm;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -148,7 +145,7 @@ public class EventEditorActivity extends AppCompatActivity {
 
     private void checkEvent() {
         String name=eventName.getText().toString();
-        if(EventRetriever.findEventByName(name)!=null) {
+        if(DatabaseRetriever.findEventByName(name)!=null) {
             if(mode.equals("create")||!name.equals(eventNameToEdit)) {
                 eventName.setError("You can't have two events with the same name.");
                 eventName.requestFocus();
@@ -175,7 +172,7 @@ public class EventEditorActivity extends AppCompatActivity {
                 break;
 
             case "edit":
-                UserEvent ue=EventRetriever.findEventByName(eventNameToEdit);
+                UserEvent ue= DatabaseRetriever.findEventByName(eventNameToEdit);
                 if(ue==null) {
                     createEvent();
                     break;
@@ -194,7 +191,7 @@ public class EventEditorActivity extends AppCompatActivity {
             //TODO: Copy from editEvent(UserEvent)
         }
         UserEvent ue=new UserEvent(gc.getTime().getTime(),eventName.getText().toString(),currentPlace, enl);
-        EventRetriever.addEvent(ue);
+        DatabaseRetriever.addEvent(ue);
     }
 
     private void editEvent(@NonNull UserEvent ue) {
@@ -207,7 +204,7 @@ public class EventEditorActivity extends AppCompatActivity {
             int t=getMinutes(str);
             ue.addNotification(new EventNotification(t));
         }
-        EventRetriever.updateEvent(ue);
+        DatabaseRetriever.updateEvent(ue);
     }
 
     /**

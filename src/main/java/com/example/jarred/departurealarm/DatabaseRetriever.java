@@ -18,13 +18,13 @@ import java.util.TreeSet;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Handles loading in the events, storing them, and giving info about them to other classes
+ * Handles loading in everything from cloud storage, storing everything, and passing on the info.
  *
  * @author Jarred
  * @version 10/30/2016
  */
-public final class EventRetriever {
-    private EventRetriever(){}
+public final class DatabaseRetriever {
+    private DatabaseRetriever(){}
 
     private static Collection<UserEvent> events;
     private static FirebaseStorage storage;

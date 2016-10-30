@@ -1,18 +1,12 @@
 package com.example.jarred.departurealarm;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.FrameLayout;
 import android.widget.Switch;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.UnknownFormatConversionException;
 
 /**
  * The activity to see an overview of all upcoming events
@@ -81,13 +75,13 @@ public class EventViewActivity extends AppCompatActivity implements CalendarView
     @Override
     protected void onStop() {
         super.onStop();
-        EventRetriever.writeToFirebase();
+        DatabaseRetriever.writeToFirebase();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventRetriever.writeToFirebase();
+        DatabaseRetriever.writeToFirebase();
     }
 
     private class EventViewChangeListener implements CompoundButton.OnCheckedChangeListener {

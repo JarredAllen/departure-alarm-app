@@ -24,7 +24,8 @@
         <activity android:name=".RecoverPasswordActivity" />
         <activity android:name=".EventViewActivity" />
         <activity android:name=".EventEditorActivity" />
-        <activity android:name=".DetailedEventViewActivity"></activity>
+        <activity android:name=".DetailedEventViewActivity" />
+        <activity android:name=".SettingsActivity"></activity>
     </application>
 
 </manifest>

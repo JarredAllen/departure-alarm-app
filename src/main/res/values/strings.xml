@@ -19,6 +19,17 @@
     <string name="event_calendar">View type: Calendar</string>
     <string name="event_list">View type: List</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Array Resources for Settings Dropdown Boxes -->
+    <string-array name="modes">
+        <item>Driving</item>
+        <item>Walking</item>
+        <item>Bicycling</item>
+        <item>Public Transit</item>
+    </string-array>
+    <string-array name="public_transit_modes">
+        <item>Bus</item>
+        <item>Subway</item>
+        <item>Train</item>
+        <item>Tram</item>
+    </string-array>
 </resources>

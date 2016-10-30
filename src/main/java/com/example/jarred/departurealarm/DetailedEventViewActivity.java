@@ -28,7 +28,7 @@ public class DetailedEventViewActivity extends AppCompatActivity {
                 editEvent();
             }
         });
-        ue=EventRetriever.findEventByName(getIntent().getStringExtra(packageName+".eventName"));
+        ue= DatabaseRetriever.findEventByName(getIntent().getStringExtra(packageName+".eventName"));
         TextView eventName=(TextView)findViewById(R.id.event_name_display);
         eventName.setText(ue.getName());
         TextView eventLocation=(TextView)findViewById(R.id.event_location_display);
