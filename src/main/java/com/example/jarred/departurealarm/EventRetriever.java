@@ -18,7 +18,7 @@ import java.util.TreeSet;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Handles loading in the events and storing them
+ * Handles loading in the events, storing them, and giving info about them to other classes
  *
  * @author Jarred
  * @version 10/30/2016
