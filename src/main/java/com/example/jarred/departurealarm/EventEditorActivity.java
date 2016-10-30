@@ -25,7 +25,7 @@ import java.util.GregorianCalendar;
  * The activity that the user can use to edit an existing event or create a new event.
  *
  * @author Jarred
- * @version 10/29/2016
+ * @version 10/30/2016
  */
 public class EventEditorActivity extends AppCompatActivity {
 
