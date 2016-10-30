@@ -188,7 +188,9 @@ public class EventEditorActivity extends AppCompatActivity {
     private void createEvent() {
         ArrayList<EventNotification>enl=new ArrayList<>(5);
         for(int i=0;i<visibleEvents;i++) {
-            //TODO: Copy from editEvent(UserEvent)
+            String str=notificationTexts[i].getText().toString();
+            int t=getMinutes(str);
+            enl.add(new EventNotification(t));
         }
         UserEvent ue=new UserEvent(gc.getTime().getTime(),eventName.getText().toString(),currentPlace, enl);
         DatabaseRetriever.addEvent(ue);

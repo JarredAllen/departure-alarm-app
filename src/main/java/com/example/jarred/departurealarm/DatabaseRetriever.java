@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -12,7 +11,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.Collection;
-import java.util.Objects;
 import java.util.TreeSet;
 
 /**
@@ -27,11 +25,11 @@ public final class DatabaseRetriever {
     private static Collection<UserEvent> events;
     private static FirebaseStorage storage;
 
-    private static boolean isLoaded;
+    private static boolean areEventsLoaded;
 
     static {
         storage=FirebaseStorage.getInstance();
-        isLoaded=false;
+        areEventsLoaded=false;
     }
 
     /**
@@ -70,7 +68,7 @@ public final class DatabaseRetriever {
                         for (String event : text.split("\uFDD1")) {
                             events.add(UserEvent.userEventFromString(event));
                         }
-                        isLoaded = true;
+                        areEventsLoaded = true;
                     }
                 });
             }
@@ -83,7 +81,7 @@ public final class DatabaseRetriever {
      * @param ue The event that the user has deleted
      */
     public static void removeEvent(UserEvent ue) {
-        while(!isLoaded) {
+        while(!areEventsLoaded) {
             try {
                 Thread.sleep(1000);
             }
