@@ -77,7 +77,7 @@ public final class EventRetriever {
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        //TODO: Handle being unable to acquire the user's data from the server
+                        throw new IllegalStateException("Could not retrieve the user's data.", e);
                     }
                 });
             }

@@ -84,6 +84,12 @@ public class EventViewActivity extends AppCompatActivity implements CalendarView
         EventRetriever.writeToFirebase();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventRetriever.writeToFirebase();
+    }
+
     private class EventViewChangeListener implements CompoundButton.OnCheckedChangeListener {
         @Override
         public void onCheckedChanged(CompoundButton v, boolean isChecked) {
