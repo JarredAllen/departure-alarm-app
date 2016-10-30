@@ -25,7 +25,12 @@
         <activity android:name=".EventViewActivity" />
         <activity android:name=".EventEditorActivity" />
         <activity android:name=".DetailedEventViewActivity" />
-        <activity android:name=".SettingsActivity"></activity>
+        <activity android:name=".SettingsActivity" />
+
+        <service
+            android:name=".CreateNotificationsService"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
 </manifest>

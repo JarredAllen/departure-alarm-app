@@ -3,6 +3,7 @@ package com.example.jarred.departurealarm;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.android.gms.location.places.Place;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -10,12 +11,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Handles loading in everything from cloud storage, storing everything, and passing on the info.
@@ -157,5 +155,13 @@ public final class DatabaseRetriever {
             return true;
         }
         return false;
+    }
+
+    public static int getTravelTime(UserEvent ue) {
+        Place p=ue.getLocation();
+        String destination="";
+        destination=p.getAddress().toString();
+
+        return 0;
     }
 }

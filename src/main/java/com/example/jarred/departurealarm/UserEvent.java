@@ -1,11 +1,7 @@
 package com.example.jarred.departurealarm;
 
 import android.app.Application;
-import android.app.Notification;
-import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationBuilderWithBuilderAccessor;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -216,6 +212,7 @@ class EventNotification implements Cloneable {
         return false;
     }
 
+    @SuppressWarnings({"CloneDoesntCallSuperClone", "CloneDoesntDeclareCloneNotSupportedException"})
     @Override
     /**
      * Returns an exact copy of this object.
