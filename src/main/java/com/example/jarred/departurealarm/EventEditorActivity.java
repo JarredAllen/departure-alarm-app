@@ -1,5 +1,6 @@
 package com.example.jarred.departurealarm;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -170,29 +171,62 @@ public class EventEditorActivity extends AppCompatActivity {
         //TODO: Write the changes into everything that they need to be written into
         switch(mode) {
             case "create":
-                ArrayList<EventNotification>enl=new ArrayList<>(5);
-                for(int i=0;i<visibleEvents;i++) {
-                    //TODO: Get time values
-                }
-                UserEvent ue=new UserEvent(gc.getTime().getTime(),eventName.getText().toString(),currentPlace, enl);
-                EventRetriever.addEvent(ue);
+                createEvent();
                 break;
 
             case "edit":
-                ue=EventRetriever.findEventByName(eventNameToEdit);
-                ue.setName(eventName.getText().toString());
-                ue.setTime(gc.getTime().getTime());
-                ue.setLocation(currentPlace);
-                ue.clearNotifications();
-                for(EditText et:notificationTexts) {
-                    //TODO: Add notifications to ue
+                UserEvent ue=EventRetriever.findEventByName(eventNameToEdit);
+                if(ue==null) {
+                    createEvent();
+                    break;
                 }
-                EventRetriever.updateEvent(ue);
+                editEvent(ue);
                 break;
 
             default:
                 throw new RuntimeException();//This line should not run, but I will leave it here just in case
         }
+    }
+
+    private void createEvent() {
+        ArrayList<EventNotification>enl=new ArrayList<>(5);
+        for(int i=0;i<visibleEvents;i++) {
+            //TODO: Copy from editEvent(UserEvent)
+        }
+        UserEvent ue=new UserEvent(gc.getTime().getTime(),eventName.getText().toString(),currentPlace, enl);
+        EventRetriever.addEvent(ue);
+    }
+
+    private void editEvent(@NonNull UserEvent ue) {
+        ue.setName(eventName.getText().toString());
+        ue.setTime(gc.getTime().getTime());
+        ue.setLocation(currentPlace);
+        ue.clearNotifications();
+        for (int i=0;i<visibleEvents;i++) {
+            String str=notificationTexts[i].getText().toString();
+            int t=getMinutes(str);
+            ue.addNotification(new EventNotification(t));
+        }
+        EventRetriever.updateEvent(ue);
+    }
+
+    /**
+     * Calculate the number of minutes from the number of hours and minutes
+     *
+     * @param str Time formatted as HH:MM, H:MM,MM
+     * @return The number of minutes
+     */
+    private int getMinutes(String str) {
+        int t=0;
+        try {
+            t=Integer.parseInt(str);
+        }
+        catch (NumberFormatException nfe) {
+            String[] parts = str.split(":");
+            t += Integer.parseInt(parts[1]);
+            t += Integer.parseInt(parts[0]) * 60;
+        }
+        return t;
     }
 
     class OnNotificationRemoved implements View.OnClickListener {
