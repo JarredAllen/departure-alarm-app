@@ -54,6 +54,37 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView6" />
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/travel_mode_picker" />
+
+            <TextView
+                android:text="Preferred Public Transit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/public_transit_unused"
+                android:visibility="gone" />
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/public_transit_picker"
+                android:visibility="gone" />
+
+            <TextView
+                android:text="Departure Location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Switch
+                android:text="Current Location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/switch1"
+                android:checked="false"
+                android:splitTrack="false" />
         </LinearLayout>
     </ScrollView>
 

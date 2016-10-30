@@ -74,11 +74,6 @@ public final class DatabaseRetriever {
                         }
                         isLoaded = true;
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        throw new IllegalStateException("Could not retrieve the user's data.", e);
-                    }
                 });
             }
         }

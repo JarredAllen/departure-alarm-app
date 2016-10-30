@@ -24,7 +24,7 @@
         <item>Driving</item>
         <item>Walking</item>
         <item>Bicycling</item>
-        <item>Public Transit</item>
+        <item>Transit</item>
     </string-array>
     <string-array name="public_transit_modes">
         <item>Bus</item>
