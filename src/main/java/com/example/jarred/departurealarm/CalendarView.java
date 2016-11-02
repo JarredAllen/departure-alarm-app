@@ -1,6 +1,7 @@
 package com.example.jarred.departurealarm;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,14 +10,18 @@ import android.view.ViewGroup;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link CalendarView.InteractionListener} interface
- * to handle interaction events.
+ * A view of events
+ *
+ * @author Jarred
+ * @version 11/2/2016
  */
 public class CalendarView extends Fragment implements View.OnClickListener {
 
+    private static String packageName="com.example.jarred.departurealarm";
+
     private InteractionListener mListener;
+
+    private android.widget.CalendarView calendar;
 
     public CalendarView() {
 
@@ -31,7 +36,11 @@ public class CalendarView extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_calendar_view, container, false);
+        View view = inflater.inflate(R.layout.fragment_calendar_view, container, false);
+        calendar=(android.widget.CalendarView)view.findViewById(R.id.calendar_view);
+        calendar.setOnClickListener(this);
+        calendar.setDate(System.currentTimeMillis()/1000L);
+        return view;
     }
 
     @Override
@@ -45,16 +54,19 @@ public class CalendarView extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    /**
-     * Run when the
-     */
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
+    @Override
     public void onClick(View v) {
-
+        if(v==calendar) {
+            Intent intent=new Intent(getActivity(), ShowEventListViewActivity.class);
+            intent.putExtra(packageName+".startTime", calendar.getDate()+"");
+            intent.putExtra(packageName+".endTime", ""+(calendar.getDate()+86400));
+            startActivity(intent);
+        }
     }
 
     /**
