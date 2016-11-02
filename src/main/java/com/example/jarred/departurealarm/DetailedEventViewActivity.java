@@ -57,7 +57,7 @@ public class DetailedEventViewActivity extends AppCompatActivity implements Data
                 ((TextView)notsDisplay[i].getChildAt(0)).setText(String.format(Locale.US, "Notification at %d02:%d02 before departure time.", minutes/60, minutes%60));
             }
             TextView departureTime=(TextView)findViewById(R.id.departure_time_display);
-            departureTime.setText(new SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.US).format(new Date(ue.getTime()-DatabaseRetriever.getTravelTime(ue))));
+            departureTime.setText(DatabaseRetriever.getSdf().format(new Date(ue.getTime()-DatabaseRetriever.getTravelTime(ue))));
             DatabaseRetriever.addListener(this);
         }
     }

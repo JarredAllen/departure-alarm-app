@@ -16,11 +16,15 @@ import com.google.firebase.storage.StorageReference;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.NavigableSet;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
@@ -47,12 +51,14 @@ public final class DatabaseRetriever {
 
     private DatabaseRetriever(){}
 
-    private static Collection<UserEvent> events;
+    private static NavigableSet<UserEvent> events;
     private static FirebaseStorage storage;
 
     private static ArrayList<String> settings;
 
     private static String lastLoadTime;
+
+    private static SimpleDateFormat sdf;
 
     private static boolean isBuildingSettings;
     private static boolean isBuildingEvents;
@@ -70,6 +76,7 @@ public final class DatabaseRetriever {
         isBuildingLastLoad=false;
         areLastLoadTimeBuilt=false;
         listeners=new ArrayList<>();
+        sdf=new SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.US);
     }
 
     /**
@@ -77,12 +84,12 @@ public final class DatabaseRetriever {
      *
      * @return The events of the current user
      */
-    public static Collection<UserEvent> getEvents() {
+    public static SortedSet<UserEvent> getEvents() {
         if(events==null) {
             isBuildingEvents =true;
             buildEvents();
         }
-        return Collections.unmodifiableCollection(events);
+        return Collections.unmodifiableSortedSet(events);
     }
 
     /**
@@ -444,5 +451,9 @@ public final class DatabaseRetriever {
      */
     public static boolean removeListener(EventsUpdateListener eul) {
         return listeners.remove(eul);
+    }
+
+    public static SimpleDateFormat getSdf() {
+        return sdf;
     }
 }

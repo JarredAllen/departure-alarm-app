@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.IllegalFormatException;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A class that represents events that the user may have
@@ -138,6 +139,15 @@ public class UserEvent implements Comparable<UserEvent> {
      */
     public String toString() {
         return time+""+'\uFDD0'+name+'\uFDD0'+location.getId()+'\uFDD0'+notifications.toString();
+    }
+
+    /**
+     * Get a user-friendly string representation of this object. Can not be reversed like <code>toString()</code> can.
+     *
+     * @return A user friendly display of this screen.
+     */
+    public String toUserFriendlyString() {
+        return String.format(Locale.US, "");
     }
 
     //Getters and setters
