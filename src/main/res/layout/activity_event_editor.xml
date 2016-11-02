@@ -32,17 +32,13 @@
             android:hint="Event Name"
             android:maxLines="1" />
 
-        <Button
-            android:text="Select Time"
+        <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="date"
+            android:ems="10"
             android:id="@+id/event_time"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textAlignment="viewStart"
-            android:textSize="18sp"
-            android:layout_gravity="start"
-            android:gravity="center_vertical|start" />
+            android:hint="Event Time" />
 
         <Button
             android:text="Select Event Location"

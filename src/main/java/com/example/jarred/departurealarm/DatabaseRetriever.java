@@ -220,7 +220,7 @@ public final class DatabaseRetriever {
             }
         }
         if(events.remove(ue)) {
-            updateListeners();
+            updateListeners(ue);
         }
     }
 
@@ -234,7 +234,7 @@ public final class DatabaseRetriever {
             buildEvents();
         }
         events.add(ue);
-        updateListeners();
+        updateListeners(ue);
     }
 
     /**
@@ -307,7 +307,7 @@ public final class DatabaseRetriever {
         }
         if(events.remove(ue)) {
             events.add(ue);
-            updateListeners();
+            updateListeners(ue);
             return true;
         }
         return false;
@@ -418,7 +418,7 @@ public final class DatabaseRetriever {
     }
 
     public interface EventsUpdateListener {
-        void onEventsUpdate();
+        void onEventsUpdate(UserEvent ue);
     }
 
     /**
@@ -430,9 +430,9 @@ public final class DatabaseRetriever {
         listeners.add(eul);
     }
 
-    private static void updateListeners() {
+    private static void updateListeners(UserEvent ue) {
         for (EventsUpdateListener eul:listeners) {
-            eul.onEventsUpdate();
+            eul.onEventsUpdate(ue);
         }
     }
 

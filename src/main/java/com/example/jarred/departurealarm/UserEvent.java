@@ -10,13 +10,15 @@ import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.IllegalFormatException;
+import java.util.List;
 
 /**
  * A class that represents events that the user may have
  *
  * @author Jarred
- * @version 10/29/2016
+ * @version 11/2/2016
  */
 public class UserEvent implements Comparable<UserEvent> {
 
@@ -171,8 +173,8 @@ public class UserEvent implements Comparable<UserEvent> {
         notifications=new ArrayList<>(5);
     }
 
-    public ArrayList<EventNotification> getNotifications() {
-        return notifications;
+    public List<EventNotification> getNotifications() {
+        return Collections.unmodifiableList(notifications);
     }
 
     public void addNotification(EventNotification en) {
@@ -212,6 +214,10 @@ class EventNotification implements Cloneable {
      */
     public boolean equals(Object obj) {
         return obj instanceof EventNotification && ((EventNotification) obj).minutes == minutes;
+    }
+
+    public int getMinutes() {
+        return minutes;
     }
 
     @SuppressWarnings({"CloneDoesntCallSuperClone", "CloneDoesntDeclareCloneNotSupportedException"})
