@@ -23,6 +23,7 @@ public class UserEvent implements Comparable<UserEvent> {
     private long time;//number of seconds after Jan. 1, 1970
     private String name;
     private Place location;
+
     private ArrayList<EventNotification> notifications;
 
     /**
@@ -170,6 +171,10 @@ public class UserEvent implements Comparable<UserEvent> {
         notifications=new ArrayList<>(5);
     }
 
+    public ArrayList<EventNotification> getNotifications() {
+        return notifications;
+    }
+
     public void addNotification(EventNotification en) {
         notifications.add(en);
     }
@@ -206,10 +211,7 @@ class EventNotification implements Cloneable {
      * @return true if and only if obj is equal to this object
      */
     public boolean equals(Object obj) {
-        if(obj instanceof EventNotification) {
-            return ((EventNotification)obj).minutes==minutes;
-        }
-        return false;
+        return obj instanceof EventNotification && ((EventNotification) obj).minutes == minutes;
     }
 
     @SuppressWarnings({"CloneDoesntCallSuperClone", "CloneDoesntDeclareCloneNotSupportedException"})

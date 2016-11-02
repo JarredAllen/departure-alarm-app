@@ -17,7 +17,8 @@
         android:id="@+id/cancel_button"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:textSize="13sp" />
+        android:textSize="13sp"
+        android:layout_alignParentLeft="true" />
 
     <Button
         android:text="Save Changes"
@@ -26,7 +27,8 @@
         android:id="@+id/confirm_button"
         android:textSize="13sp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true" />
 
     <Button
         android:text="Apply"
@@ -35,14 +37,16 @@
         android:id="@+id/apply_button"
         android:textSize="13sp"
         android:layout_alignParentBottom="true"
-        android:layout_toStartOf="@+id/confirm_button" />
+        android:layout_toStartOf="@+id/confirm_button"
+        android:layout_toLeftOf="@+id/confirm_button" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/cancel_button">
+        android:layout_above="@+id/cancel_button"
+        android:layout_alignParentLeft="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -61,30 +65,21 @@
                 android:id="@+id/travel_mode_picker" />
 
             <TextView
-                android:text="Preferred Public Transit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/public_transit_unused"
-                android:visibility="gone" />
-
-            <Spinner
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/public_transit_picker"
-                android:visibility="gone" />
-
-            <TextView
-                android:text="Departure Location"
+                android:text="Departure Location:"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <Switch
-                android:text="Current Location"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/switch1"
-                android:checked="false"
-                android:splitTrack="false" />
+                android:id="@+id/current_default_location" />
+
+            <Button
+                android:text="Set new departure location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/departure_location_set_button" />
+
         </LinearLayout>
     </ScrollView>
 

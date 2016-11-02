@@ -1,11 +1,12 @@
 apply plugin: 'com.android.application'
 
+//noinspection GroovyMissingReturnStatement
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.2"
     defaultConfig {
         applicationId "com.example.jarred.departurealarm"
-        minSdkVersion 21
+        minSdkVersion 16
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
@@ -24,11 +25,14 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    //noinspection GradleDependency,GradleDependency
     compile 'com.android.support:appcompat-v7:24.2.1'
+    //noinspection GradleDependency
     compile 'com.android.support:design:24.2.1'
     compile 'com.google.firebase:firebase-core:9.8.0'
     compile 'com.google.firebase:firebase-storage:9.8.0'
     compile 'com.google.firebase:firebase-auth:9.8.0'
+    //noinspection GradleDependency
     compile 'com.android.support:support-v4:24.2.1'
     compile 'com.google.android.gms:play-services-places:9.8.0'
     compile 'com.google.android.gms:play-services:9.8.0'

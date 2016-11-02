@@ -14,6 +14,12 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 
+/**
+ * Class to handle creating new user accounts
+ *
+ * @author Jarred
+ * @version 10/31/2016
+ */
 public class SignUpActivity extends AppCompatActivity {
 
     private String packageName="com.example.jarred.departurealarm";
@@ -31,7 +37,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     @Override
     /**
-     * Builds the activity to disply to the user
+     * Builds the activity to display to the user
      *
      * @param savedInstanceState The information about this activity if it was cleared from the RAM to make space
      */
@@ -113,6 +119,7 @@ public class SignUpActivity extends AppCompatActivity {
      */
     private void onSuccessfulLogin() {
         if(authentication.getCurrentUser()!=null) {
+            DatabaseRetriever.doOnCreateUser();
             Intent intent = new Intent(this, EventViewActivity.class);
             startActivity(intent);
         }

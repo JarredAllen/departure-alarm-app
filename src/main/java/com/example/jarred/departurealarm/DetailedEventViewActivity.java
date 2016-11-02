@@ -10,9 +10,9 @@ import android.widget.TextView;
  * A class that runs code for showing a detailed view of all of the events in an activity
  *
  * @author Jarred
- * @version 10/29/2016
+ * @version 10/31/2016
  */
-public class DetailedEventViewActivity extends AppCompatActivity {
+public class DetailedEventViewActivity extends AppCompatActivity implements DatabaseRetriever.EventsUpdateListener {
 
     private static String packageName="com.example.jarred.departurealarm";
 
@@ -33,6 +33,7 @@ public class DetailedEventViewActivity extends AppCompatActivity {
         eventName.setText(ue.getName());
         TextView eventLocation=(TextView)findViewById(R.id.event_location_display);
         eventLocation.setText(ue.getLocation().getAddress());
+        //TODO: Display other stuff
 
     }
 
@@ -41,5 +42,12 @@ public class DetailedEventViewActivity extends AppCompatActivity {
         intent.putExtra(packageName+".eventEditorAction", "edit");
         intent.putExtra(packageName+".nameOfEvent", ue.getName());
         startActivity(intent);
+    }
+
+    @Override
+    public void onEventsUpdate() {
+        if(!DatabaseRetriever.getEvents().contains(ue)) {
+            finish();
+        }
     }
 }

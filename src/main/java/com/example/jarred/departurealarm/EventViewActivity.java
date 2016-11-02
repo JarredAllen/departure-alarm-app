@@ -108,7 +108,11 @@ public class EventViewActivity extends AppCompatActivity implements CalendarView
         startActivity(intent);
     }
 
+    /**
+     * Launches an activity for displaying the settings and letting the user change them
+     */
     private void showSettings(){
-        //TODO: Implement this
+        Intent intent=new Intent(this, SettingsActivity.class);
+        startActivity(intent);
     }
 }

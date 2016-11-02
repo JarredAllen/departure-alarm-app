@@ -26,11 +26,5 @@
         <item>Bicycling</item>
         <item>Transit</item>
     </string-array>
-    <string-array name="public_transit_modes">
-        <item>Bus</item>
-        <item>Subway</item>
-        <item>Train</item>
-        <item>Tram</item>
-    </string-array>
     <string name="title_activity_maps">Map</string>
 </resources>

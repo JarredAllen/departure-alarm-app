@@ -1,5 +1,6 @@
 package com.example.jarred.departurealarm;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,7 +24,7 @@ import java.util.GregorianCalendar;
  * The activity that the user can use to edit an existing event or create a new event.
  *
  * @author Jarred
- * @version 10/30/2016
+ * @version 10/31/2016
  */
 public class EventEditorActivity extends AppCompatActivity {
 
@@ -49,8 +50,10 @@ public class EventEditorActivity extends AppCompatActivity {
 
     //TODO: Track erroring fields
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //TODO: Have users use a PlacePicker to determine their event location
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_editor);
         mode=getIntent().getStringExtra(packageName+".eventEditorAction");
@@ -132,6 +135,18 @@ public class EventEditorActivity extends AppCompatActivity {
         for(Button b:notificationDeleteButtons) {
             b.setOnClickListener(onr);
         }
+        Button del=(Button)findViewById(R.id.delete_event_button);
+        del.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteThisEvent();
+            }
+        });
+    }
+
+    private void deleteThisEvent() {
+        DatabaseRetriever.removeEvent(DatabaseRetriever.findEventByName(eventNameToEdit));
+        finish();
     }
 
     private void selectTime() {
@@ -165,7 +180,6 @@ public class EventEditorActivity extends AppCompatActivity {
     }
 
     private void saveChanges() {
-        //TODO: Write the changes into everything that they need to be written into
         switch(mode) {
             case "create":
                 createEvent();

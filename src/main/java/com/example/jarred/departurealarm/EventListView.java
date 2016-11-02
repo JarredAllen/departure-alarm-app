@@ -46,9 +46,6 @@ public class EventListView extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
-    public void onClick(View v) {
-
-    }
 
     @Override
     public void onDetach() {
