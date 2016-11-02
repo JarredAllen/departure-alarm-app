@@ -58,7 +58,14 @@ public class DetailedEventViewActivity extends AppCompatActivity implements Data
             }
             TextView departureTime=(TextView)findViewById(R.id.departure_time_display);
             departureTime.setText(new SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.US).format(new Date(ue.getTime()-DatabaseRetriever.getTravelTime(ue))));
+            DatabaseRetriever.addListener(this);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onPause();
+        DatabaseRetriever.removeListener(this);
     }
 
     private void editEvent() {
@@ -70,6 +77,10 @@ public class DetailedEventViewActivity extends AppCompatActivity implements Data
 
     @Override
     public void onEventsUpdate(UserEvent ue) {
+        if(isDestroyed()) {
+            DatabaseRetriever.removeListener(this);
+            return;
+        }
         if(ue==this.ue) {
             finish();
             if(DatabaseRetriever.getEvents().contains(this.ue)) {

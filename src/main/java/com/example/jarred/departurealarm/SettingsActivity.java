@@ -9,8 +9,6 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
@@ -19,7 +17,7 @@ import com.google.android.gms.maps.model.LatLng;
  * An activity to handle displaying user settings and letting the user pick new settings
  *
  * @author Jarred
- * @version 10/31/2016
+ * @version 11/2/2016
  */
 public class SettingsActivity extends AppCompatActivity {
 
@@ -40,9 +38,9 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        String defLoc=DatabaseRetriever.getSettings(DatabaseRetriever.DEPARTURE_LOCATION);
+        String departureLocation =DatabaseRetriever.getSettings(DatabaseRetriever.DEPARTURE_LOCATION);
         TextView defLocDisplay=(TextView)findViewById(R.id.current_default_location);
-        defLocDisplay.setText(defLoc);
+        defLocDisplay.setText(departureLocation);
 
         String travelMode=DatabaseRetriever.getSettings(DatabaseRetriever.TRAVEL_MODE);
         for (int i=0;i<travelModePicker.getCount();i++) {
@@ -55,7 +53,6 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void selectDepartureAddress() {
         PlacePicker.IntentBuilder placePicker= new PlacePicker.IntentBuilder();
-
         try {
             startActivityForResult(placePicker.build(this), 1);
         }

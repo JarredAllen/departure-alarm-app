@@ -50,6 +50,8 @@ public class EventViewActivity extends AppCompatActivity implements CalendarView
                 showSettings();
             }
         });
+
+        startService(new Intent(this, CreateNotificationsService.class));
     }
 
     private void buildEventCalendar() {
