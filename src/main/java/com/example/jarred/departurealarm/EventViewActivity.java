@@ -12,7 +12,7 @@ import android.widget.Switch;
  * The activity to see an overview of all upcoming events
  *
  * @author Jarred
- * @version 10/30/2016
+ * @version 11/2/2016
  */
 public class EventViewActivity extends AppCompatActivity implements CalendarView.InteractionListener {
 
@@ -72,6 +72,18 @@ public class EventViewActivity extends AppCompatActivity implements CalendarView
         Intent intent=new Intent(this, DetailedEventViewActivity.class);
         intent.putExtra(packageName+".eventName", name);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onRestart() {
+        calendar=null;
+        list=null;
+        if(eventViewType.isChecked()) {
+            buildEventCalendar();
+        }
+        else {
+            buildEventList();
+        }
     }
 
     @Override
