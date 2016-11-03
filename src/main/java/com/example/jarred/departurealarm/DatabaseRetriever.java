@@ -172,6 +172,7 @@ public final class DatabaseRetriever {
                             events.add(UserEvent.userEventFromString(event));
                         }
                         areEventsLoaded = true;
+                        events=events.headSet(new UserEvent(System.currentTimeMillis()/1000-1, "", null), true);
                     }
                 });
             }
