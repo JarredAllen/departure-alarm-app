@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 /**
  * The activity to see an overview of all upcoming events
  *
@@ -51,6 +53,14 @@ public class EventViewActivity extends AppCompatActivity implements CalendarView
             }
         });
 
+        Button logOutButton=(Button)findViewById(R.id.logout_button);
+        logOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logOut();
+            }
+        });
+
         startService(new Intent(this, CreateNotificationsService.class));
     }
 
@@ -76,6 +86,7 @@ public class EventViewActivity extends AppCompatActivity implements CalendarView
 
     @Override
     protected void onRestart() {
+        super.onRestart();
         calendar=null;
         list=null;
         if(eventViewType.isChecked()) {
@@ -128,5 +139,12 @@ public class EventViewActivity extends AppCompatActivity implements CalendarView
     private void showSettings(){
         Intent intent=new Intent(this, SettingsActivity.class);
         startActivity(intent);
+    }
+
+    private void logOut() {
+        FirebaseAuth.getInstance().signOut();
+        Intent intent=new Intent(this, SignUpActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
