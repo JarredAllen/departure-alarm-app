@@ -14,7 +14,7 @@ import com.google.firebase.auth.FirebaseAuth;
  * The activity to see an overview of all upcoming events
  *
  * @author Jarred
- * @version 11/2/2016
+ * @version 11/16/2016
  */
 public class EventViewActivity extends AppCompatActivity implements CalendarView.InteractionListener {
 
@@ -142,9 +142,13 @@ public class EventViewActivity extends AppCompatActivity implements CalendarView
     }
 
     private void logOut() {
-        FirebaseAuth.getInstance().signOut();
         Intent intent=new Intent(this, SignUpActivity.class);
         startActivity(intent);
         finish();
+        try {
+            Thread.sleep(2000L);
+        }
+        catch (InterruptedException ie){assert true;}
+        FirebaseAuth.getInstance().signOut();
     }
 }

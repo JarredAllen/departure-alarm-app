@@ -31,7 +31,7 @@ import java.util.TreeSet;
  * Handles loading in everything from cloud storage, storing everything, and passing on the info.
  *
  * @author Jarred
- * @version 10/31/2016
+ * @version 11/16/2016
  */
 public final class DatabaseRetriever {
 
@@ -159,7 +159,7 @@ public final class DatabaseRetriever {
             }
             else {
                 events = new TreeSet<>();
-                StorageReference ref = storage.getReferenceFromUrl("gs://departurealarm-7445e.appspot.com/" + fu.getUid() + "/events.txt");
+                StorageReference ref = storage.getReferenceFromUrl("gs://departurealarm-7445e.appspot.com").child(fu.getUid()).child("/events.txt");
                 ref.getBytes(1000000).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override
                     public void onSuccess(byte[] bytes) {
@@ -187,7 +187,7 @@ public final class DatabaseRetriever {
             }
             else {
                 settings=new ArrayList<>();
-                StorageReference file=storage.getReferenceFromUrl("gs://departurealarm-7445e.appspot.com/" + fu.getUid() + "/settings.txt");
+                StorageReference file=storage.getReferenceFromUrl("gs://departurealarm-7445e.appspot.com").child(fu.getUid()).child("/settings.txt");
                 file.getBytes(1000000L).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override
                     public void onSuccess(byte[] bytes) {
@@ -263,19 +263,22 @@ public final class DatabaseRetriever {
             throw new IllegalStateException("The user must be logged in.");
         }
         else {
-            StorageReference toWrite;
-            if(areEventsLoaded) {
-                toWrite = storage.getReference("gs://departurealarm-7445e.appspot.com/" + fu.getUid() + "/events.txt");
-                toWrite.putBytes(turnEventsToString().getBytes());
+            try {
+                StorageReference toWrite;
+                if (areEventsLoaded) {
+                    toWrite = storage.getReference("gs://departurealarm-7445e.appspot.com").child(fu.getUid()).child("events.txt");
+                    toWrite.putBytes(turnEventsToString().getBytes());
+                }
+                if (areSettingsLoaded) {
+                    toWrite = storage.getReference("gs://departurealarm-7445e.appspot.com").child(fu.getUid()).child("settings.txt");
+                    toWrite.putBytes(settings.toString().getBytes());
+                }
+                if (areLastLoadTimeBuilt) {
+                    toWrite = storage.getReference("gs://departurealarm-7445e.appspot.com").child(fu.getUid()).child("lastWrite.txt");
+                    toWrite.putBytes(lastLoadTime.getBytes());
+                }
             }
-            if(areSettingsLoaded) {
-                toWrite = storage.getReference("gs://departurealarm-7445e.appspot.com/" + fu.getUid() + "/settings.txt");
-                toWrite.putBytes(settings.toString().getBytes());
-            }
-            if(areLastLoadTimeBuilt) {
-                toWrite = storage.getReference("gs://departurealarm-7445e.appspot.com/" + fu.getUid() + "/lastWrite.txt");
-                toWrite.putBytes(lastLoadTime.getBytes());
-            }
+            catch (RuntimeException re){assert true;}
         }
     }
 
@@ -328,7 +331,7 @@ public final class DatabaseRetriever {
                 throw new IllegalStateException("The user must be logged in.");
             }
             else {
-                StorageReference file=storage.getReferenceFromUrl("gs://departurealarm-7445e.appspot.com/" + fu.getUid() + "/lastWrite.txt");
+                StorageReference file=storage.getReferenceFromUrl("gs://departurealarm-7445e.appspot.com").child(fu.getUid()).child("/lastWrite.txt");
                 file.getBytes(1000000L).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override
                     public void onSuccess(byte[] bytes) {
@@ -376,7 +379,7 @@ public final class DatabaseRetriever {
         LatLng loc=ue.getLocation().getLatLng();
         String destination=loc.longitude+","+loc.latitude;
         String urlAdd="https://maps.googleapis.com/maps/api/directions/json?";
-        urlAdd+="origin=";//Calculate the origin
+        urlAdd+="origin="+loc.longitude+","+loc.latitude;//Calculate the origin
         urlAdd+="&destination="+destination;//Calculate the target
         urlAdd+="&arrival_time="+ue.getTime();
         if(!getSettings(TRAVEL_MODE).equalsIgnoreCase("driving")) {
@@ -413,11 +416,11 @@ public final class DatabaseRetriever {
     public static void doOnCreateUser() {
         FirebaseUser fu=FirebaseAuth.getInstance().getCurrentUser();
         if(fu!=null) {
-            StorageReference toWrite = storage.getReference("gs://departurealarm-7445e.appspot.com/" + fu.getUid() + "/events.txt");
+            StorageReference toWrite = storage.getReference("gs://departurealarm-7445e.appspot.com").child(fu.getUid()).child("events.txt");
             toWrite.putBytes("".getBytes());
-            toWrite = storage.getReference("gs://departurealarm-7445e.appspot.com/" + fu.getUid() + "/settings.txt");
+            toWrite = storage.getReference("gs://departurealarm-7445e.appspot.com").child(fu.getUid()).child("settings.txt");
             toWrite.putBytes("[,,]".getBytes());
-            toWrite = storage.getReference("gs://departurealarm-7445e.appspot.com/" + fu.getUid() + "/lastWrite.txt");
+            toWrite = storage.getReference("gs://departurealarm-7445e.appspot.com").child(fu.getUid()).child("lastWrite.txt");
             toWrite.putBytes("0".getBytes());
             buildSettings();
             buildEvents();
