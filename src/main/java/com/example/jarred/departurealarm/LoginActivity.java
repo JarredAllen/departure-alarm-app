@@ -25,7 +25,7 @@ import com.google.firebase.auth.FirebaseAuth;
  * A login screen that offers login via email/password.
  *
  * @author Jarred
- * @version 10/26/2016
+ * @version 11/16/2016
  */
 public class LoginActivity extends AppCompatActivity {
 
@@ -43,6 +43,9 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
+            FirebaseAuth.getInstance().signOut();
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -149,10 +152,6 @@ public class LoginActivity extends AppCompatActivity {
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
         }
 
         if (cancel) {
@@ -182,11 +181,6 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(this, EventViewActivity.class);
             startActivity(intent);
         }
-    }
-
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
     }
 }
 

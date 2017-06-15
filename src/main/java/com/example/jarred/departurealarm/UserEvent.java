@@ -1,11 +1,7 @@
 package com.example.jarred.departurealarm;
 
 import android.app.Application;
-import android.app.Notification;
-import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationBuilderWithBuilderAccessor;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -14,19 +10,23 @@ import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.IllegalFormatException;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * A class that represents events that the user may have
  *
  * @author Jarred
- * @version 10/29/2016
+ * @version 11/2/2016
  */
 public class UserEvent implements Comparable<UserEvent> {
 
     private long time;//number of seconds after Jan. 1, 1970
     private String name;
     private Place location;
+
     private ArrayList<EventNotification> notifications;
 
     /**
@@ -141,6 +141,15 @@ public class UserEvent implements Comparable<UserEvent> {
         return time+""+'\uFDD0'+name+'\uFDD0'+location.getId()+'\uFDD0'+notifications.toString();
     }
 
+    /**
+     * Get a user-friendly string representation of this object. Can not be reversed like <code>toString()</code> can.
+     *
+     * @return A user friendly display of this screen.
+     */
+    public String toUserFriendlyString() {
+        return String.format(Locale.US, "");
+    }
+
     //Getters and setters
 
     public long getTime() {
@@ -172,6 +181,10 @@ public class UserEvent implements Comparable<UserEvent> {
 
     public void clearNotifications() {
         notifications=new ArrayList<>(5);
+    }
+
+    public List<EventNotification> getNotifications() {
+        return Collections.unmodifiableList(notifications);
     }
 
     public void addNotification(EventNotification en) {
@@ -210,12 +223,14 @@ class EventNotification implements Cloneable {
      * @return true if and only if obj is equal to this object
      */
     public boolean equals(Object obj) {
-        if(obj instanceof EventNotification) {
-            return ((EventNotification)obj).minutes==minutes;
-        }
-        return false;
+        return obj instanceof EventNotification && ((EventNotification) obj).minutes == minutes;
     }
 
+    public int getMinutes() {
+        return minutes;
+    }
+
+    @SuppressWarnings({"CloneDoesntCallSuperClone", "CloneDoesntDeclareCloneNotSupportedException"})
     @Override
     /**
      * Returns an exact copy of this object.

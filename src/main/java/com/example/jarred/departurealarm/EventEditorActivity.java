@@ -1,11 +1,10 @@
 package com.example.jarred.departurealarm;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -17,16 +16,21 @@ import android.widget.TextView;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 /**
  * The activity that the user can use to edit an existing event or create a new event.
  *
  * @author Jarred
- * @version 10/30/2016
+ * @version 11/2/2016
  */
 public class EventEditorActivity extends AppCompatActivity {
 
@@ -36,9 +40,9 @@ public class EventEditorActivity extends AppCompatActivity {
 
     private String eventNameToEdit;//Can be null if it is creating a new event. If a new event is being created, this variable is never looked at.
 
-    private Button cancelButton, confirmButton, addNotificationButton, eventTime;
+    private Button cancelButton, confirmButton, addNotificationButton, eventLocation;
 
-    private EditText eventName;
+    private EditText eventTime, eventName;
 
     private LinearLayout[]notificationEditors;
     private EditText[]notificationTexts;
@@ -46,16 +50,32 @@ public class EventEditorActivity extends AppCompatActivity {
 
     private int visibleEvents=1;
 
-    private GregorianCalendar gc;
+    private Date currentDate;
 
     private Place currentPlace;
 
-    //TODO: Track erroring fields
+    private ArrayList<TextView>errors;
 
+    private ArrayList<SimpleDateFormat>dateFormats;
+
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_editor);
+        dateFormats=new ArrayList<>();
+        dateFormats.add(new SimpleDateFormat("dd.MM.yy HH:mm.ss", Locale.US));
+        dateFormats.add(new SimpleDateFormat("dd.MM.yy HH:mm", Locale.US));
+        dateFormats.add(new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.US));
+        dateFormats.add(new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US));
+        dateFormats.add(new SimpleDateFormat("dd-MM-yy HH:mm:ss", Locale.US));
+        dateFormats.add(new SimpleDateFormat("dd-MM-yy HH:mm", Locale.US));
+        dateFormats.add(new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US));
+        dateFormats.add(new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.US));
+        dateFormats.add(new SimpleDateFormat("dd/MM/yy HH:mm:ss", Locale.US));
+        dateFormats.add(new SimpleDateFormat("dd/MM/yy HH:mm", Locale.US));
+        dateFormats.add(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.US));
+        dateFormats.add(new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.US));
         mode=getIntent().getStringExtra(packageName+".eventEditorAction");
         cancelButton=(Button)findViewById(R.id.cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -79,9 +99,19 @@ public class EventEditorActivity extends AppCompatActivity {
             }
         });
         if(mode.equals("edit")) {
-            cancelButton.setText("Cancel Changes");
-            confirmButton.setText("Save Changes");
             eventNameToEdit=getIntent().getStringExtra(packageName+".nameOfEvent");
+            UserEvent ue=DatabaseRetriever.findEventByName(eventNameToEdit);
+            if(ue==null) {
+                eventNameToEdit=null;
+                mode="create";
+            }
+            else {
+                cancelButton.setText("Cancel Changes");
+                confirmButton.setText("Save Changes");
+                eventName.setText(eventNameToEdit);
+                eventTime.setText(dateFormats.get(11).format(new Date(ue.getTime())));
+
+            }
         }
         eventName=(EditText)findViewById(R.id.event_name);
         eventName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -91,22 +121,12 @@ public class EventEditorActivity extends AppCompatActivity {
                 return true;
             }
         });
-        eventTime=(Button)findViewById(R.id.event_time);
-        eventTime.setOnClickListener(new View.OnClickListener() {
+        eventTime=(EditText)findViewById(R.id.event_time);
+        eventTime.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public void onClick(View v) {
-                selectTime();
-            }
-        });
-        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                currentPlace=place;
-            }
-            @Override
-            public void onError(Status status) {
-
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                setTime();
+                return true;
             }
         });
         notificationEditors=new LinearLayout[5];
@@ -135,10 +155,73 @@ public class EventEditorActivity extends AppCompatActivity {
         for(Button b:notificationDeleteButtons) {
             b.setOnClickListener(onr);
         }
+        Button del=(Button)findViewById(R.id.delete_event_button);
+        del.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteThisEvent();
+            }
+        });
+        errors=new ArrayList<>();
+        eventLocation=(Button)findViewById(R.id.pick_location_button);
+        eventLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectPlace();
+            }
+        });
     }
 
-    private void selectTime() {
+    private void deleteThisEvent() {
+        DatabaseRetriever.removeEvent(DatabaseRetriever.findEventByName(eventNameToEdit));
+        finish();
+    }
 
+    private void setTime() {
+        Date eventDate=null;
+        for(SimpleDateFormat sdf:dateFormats) {
+            try {
+                Date d = sdf.parse(eventTime.getText().toString());
+                if(d.getYear()>new Date().getYear()) {
+                    if(d.getMonth()<12) {
+                        eventDate=d;
+                    }
+                }
+            }
+            catch (ParseException pe) {
+                assert true;
+            }
+        }
+        if(eventDate==null) {
+            eventTime.setError("This is not a recognized format. Recognized formats include:\ndd.MM.yy HH:mm:ss, dd.MM.yy HH:mm, dd.MM.yyyy HH:mm:ss, dd.MM.yyyy HH:mm");
+            eventTime.requestFocus();
+            errors.add(eventTime);
+        }
+        else {
+            errors.remove(eventTime);
+            currentDate=eventDate;
+        }
+    }
+
+    private void selectPlace() {
+        PlacePicker.IntentBuilder placePicker= new PlacePicker.IntentBuilder();
+        try {
+            startActivityForResult(placePicker.build(this), 1);
+        }
+        catch (Exception e) {
+            assert true;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent extraData) {
+        currentPlace=PlacePicker.getPlace(this, extraData);
+        if(currentPlace==null) {
+            errors.add(eventLocation);
+        }
+        else {
+            errors.remove(eventLocation);
+        }
     }
 
     private void addNotification() {
@@ -148,10 +231,11 @@ public class EventEditorActivity extends AppCompatActivity {
 
     private void checkEvent() {
         String name=eventName.getText().toString();
-        if(EventRetriever.findEventByName(name)!=null) {
+        if(DatabaseRetriever.findEventByName(name)!=null) {
             if(mode.equals("create")||!name.equals(eventNameToEdit)) {
                 eventName.setError("You can't have two events with the same name.");
                 eventName.requestFocus();
+                errors.add(eventName);
             }
         }
     }
@@ -168,46 +252,68 @@ public class EventEditorActivity extends AppCompatActivity {
     }
 
     private void saveChanges() {
-        //TODO: Write the changes into everything that they need to be written into
-        switch(mode) {
-            case "create":
-                createEvent();
-                break;
-
-            case "edit":
-                UserEvent ue=EventRetriever.findEventByName(eventNameToEdit);
-                if(ue==null) {
+        if(errors.isEmpty()) {
+            switch (mode) {
+                case "create":
                     createEvent();
                     break;
-                }
-                editEvent(ue);
-                break;
 
-            default:
-                throw new RuntimeException();//This line should not run, but I will leave it here just in case
+                case "edit":
+                    UserEvent ue = DatabaseRetriever.findEventByName(eventNameToEdit);
+                    if (ue == null) {
+                        createEvent();
+                        break;
+                    }
+                    editEvent(ue);
+                    break;
+
+                default:
+                    throw new RuntimeException();//This line should not run, but I will leave it here just in case
+            }
+        }
+        else {
+            for(TextView v:errors) {
+                v.setError("This field doesn't seem right.");
+            }
         }
     }
 
     private void createEvent() {
-        ArrayList<EventNotification>enl=new ArrayList<>(5);
-        for(int i=0;i<visibleEvents;i++) {
-            //TODO: Copy from editEvent(UserEvent)
+        if(errors.isEmpty()) {
+            ArrayList<EventNotification>enl=new ArrayList<>(5);
+            for(int i=0;i<visibleEvents;i++) {
+                String str=notificationTexts[i].getText().toString();
+                int t=getMinutes(str);
+                enl.add(new EventNotification(t));
+            }
+            UserEvent ue=new UserEvent(currentDate.getTime(),eventName.getText().toString(),currentPlace, enl);
+            DatabaseRetriever.addEvent(ue);
         }
-        UserEvent ue=new UserEvent(gc.getTime().getTime(),eventName.getText().toString(),currentPlace, enl);
-        EventRetriever.addEvent(ue);
+        else {
+            for(TextView v:errors) {
+                v.setError("This field doesn't seem right.");
+            }
+        }
     }
 
     private void editEvent(@NonNull UserEvent ue) {
-        ue.setName(eventName.getText().toString());
-        ue.setTime(gc.getTime().getTime());
-        ue.setLocation(currentPlace);
-        ue.clearNotifications();
-        for (int i=0;i<visibleEvents;i++) {
-            String str=notificationTexts[i].getText().toString();
-            int t=getMinutes(str);
-            ue.addNotification(new EventNotification(t));
+        if(errors.isEmpty()) {
+            ue.setName(eventName.getText().toString());
+            ue.setTime(currentDate.getTime());
+            ue.setLocation(currentPlace);
+            ue.clearNotifications();
+            for (int i=0;i<visibleEvents;i++) {
+                String str=notificationTexts[i].getText().toString();
+                int t=getMinutes(str);
+                ue.addNotification(new EventNotification(t));
+            }
+        DatabaseRetriever.updateEvent(ue);
         }
-        EventRetriever.updateEvent(ue);
+        else {
+            for(TextView v:errors) {
+                v.setError("This field doesn't seem right.");
+            }
+        }
     }
 
     /**
@@ -247,18 +353,34 @@ public class EventEditorActivity extends AppCompatActivity {
                 if(!(vals.length==0)) {
                     v.setError("Not a valid time. Accepted formats: H:MM, HH:MM");
                     v.requestFocus();
+                    errors.add(v);
                 }
                 try {
                     byte h=Byte.parseByte(vals[0]);
                     byte m=Byte.parseByte(vals[1]);
-                    if(h>99||h<0||m>60||m<0) {
+                    if(h>24||h<0||m>60||m<0||vals.length>2) {
                         v.setError("Not a valid time. Accepted formats: H:MM, HH:MM");
                         v.requestFocus();
+                        errors.add(v);
+                    }
+                    else {
+                        errors.remove(v);
                     }
                 }
                 catch (NumberFormatException nfe) {
                     v.setError("Not a valid time. Accepted format: HH:MM");
                     v.requestFocus();
+                    errors.add(v);
+                }
+                catch (ArrayIndexOutOfBoundsException aioobe) {
+                    try {
+                        Byte.parseByte(v.getText().toString());
+                    }
+                    catch (NumberFormatException nfe) {
+                        v.setError("Not a valid time. Accepted format: HH:MM");
+                        v.requestFocus();
+                        errors.add(v);
+                    }
                 }
             }
             return true;

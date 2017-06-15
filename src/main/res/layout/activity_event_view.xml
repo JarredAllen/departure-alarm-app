@@ -15,23 +15,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/info_text_unused"
-        android:layout_row="0"
-        android:layout_column="0" />
+        tools:ignore="HardcodedText" />
 
     <Switch
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/event_view_type"
-        android:layout_row="0"
-        android:layout_column="2"
         android:textOn="@string/event_calendar"
         android:textOff="@string/event_list"
-        android:splitTrack="false"
         android:text="@string/event_calendar"
         android:checked="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        tools:ignore="RelativeOverlap" />
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/event_view_list"
@@ -56,5 +53,13 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:id="@+id/settings_button" />
+
+    <Button
+        android:text="Log Out"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/create_event_button"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/logout_button" />
 
 </RelativeLayout>

@@ -4,8 +4,6 @@
     android:layout_height="match_parent"
     tools:context="com.example.jarred.departurealarm.CalendarView">
 
-    <!-- TODO: Update blank fragment layout -->
-
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -83,6 +81,6 @@
     <CalendarView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/calendarView" />
+        android:id="@+id/calendar_view" />
 
 </FrameLayout>

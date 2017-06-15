@@ -1,24 +1,20 @@
 package com.example.jarred.departurealarm;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.FrameLayout;
 import android.widget.Switch;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.UnknownFormatConversionException;
+import com.google.firebase.auth.FirebaseAuth;
 
 /**
  * The activity to see an overview of all upcoming events
  *
  * @author Jarred
- * @version 10/29/2016
+ * @version 11/16/2016
  */
 public class EventViewActivity extends AppCompatActivity implements CalendarView.InteractionListener {
 
@@ -56,6 +52,16 @@ public class EventViewActivity extends AppCompatActivity implements CalendarView
                 showSettings();
             }
         });
+
+        Button logOutButton=(Button)findViewById(R.id.logout_button);
+        logOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logOut();
+            }
+        });
+
+        startService(new Intent(this, CreateNotificationsService.class));
     }
 
     private void buildEventCalendar() {
@@ -79,9 +85,28 @@ public class EventViewActivity extends AppCompatActivity implements CalendarView
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+        calendar=null;
+        list=null;
+        if(eventViewType.isChecked()) {
+            buildEventCalendar();
+        }
+        else {
+            buildEventList();
+        }
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
-        EventRetriever.writeToFirebase();
+        DatabaseRetriever.writeToFirebase();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DatabaseRetriever.writeToFirebase();
     }
 
     private class EventViewChangeListener implements CompoundButton.OnCheckedChangeListener {
@@ -108,7 +133,22 @@ public class EventViewActivity extends AppCompatActivity implements CalendarView
         startActivity(intent);
     }
 
+    /**
+     * Launches an activity for displaying the settings and letting the user change them
+     */
     private void showSettings(){
-        //TODO: Implement this
+        Intent intent=new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    private void logOut() {
+        Intent intent=new Intent(this, SignUpActivity.class);
+        startActivity(intent);
+        finish();
+        try {
+            Thread.sleep(2000L);
+        }
+        catch (InterruptedException ie){assert true;}
+        FirebaseAuth.getInstance().signOut();
     }
 }
